@@ -85,11 +85,11 @@ const incomeData = [
 ];
 
 const majorDefaulters = [
-  { flat: "E - 001", name: "Harsh Jain", amount: 172814 },
-  { flat: "E - 403", name: "Pavaninder Singh", amount: 156312 },
-  { flat: "A - 902", name: "Rahul Mehta", amount: 137605 },
-  { flat: "J - 704", name: "M. Animuthu", amount: 137605 },
-  { flat: "J - 703", name: "L. Saravanan", amount: 119914 }
+  { flat: "001", name: "Resident 1", amount: 172814 },
+  { flat: "002", name: "Resident 2", amount: 156312 },
+  { flat: "003", name: "Resident 3", amount: 137605 },
+  { flat: "004", name: "Resident 4", amount: 137605 },
+  { flat: "005", name: "Resident 5", amount: 119914 }
 ];
 
 const oneTimeExpenses = [
