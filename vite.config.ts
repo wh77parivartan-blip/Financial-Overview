@@ -6,6 +6,9 @@ import runtimeErrorOverlay from "@replit/vite-plugin-runtime-error-modal";
 import { metaImagesPlugin } from "./vite-plugin-meta-images";
 
 export default defineConfig({
+  // Configure base path for GitHub Pages deployment
+  // Change 'gh-pages' to your repository name if not using custom domain
+  base: process.env.VITE_BASE_PATH || "/",
   plugins: [
     react(),
     runtimeErrorOverlay(),
