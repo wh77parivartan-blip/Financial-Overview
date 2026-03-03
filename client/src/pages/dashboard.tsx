@@ -14,7 +14,6 @@ import {
   Receipt,
   AlertCircle,
   FileX2,
-  Droplet,
   Activity,
   ArrowRight,
   Wallet,
@@ -22,7 +21,10 @@ import {
   Banknote,
   ShieldAlert,
   ArrowDownRight,
-  ArrowUpRight
+  ArrowUpRight,
+  UserX,
+  Zap,
+  Hammer
 } from "lucide-react";
 import {
   BarChart,
@@ -46,56 +48,58 @@ import {
 } from "@/components/ui/table";
 import { Progress } from "@/components/ui/progress";
 
+// Data Extracted from Winter Hills 77 PDF
 const deficitData = [
-  { category: "Corpus Fund Missing", amount: 4500000 },
-  { category: "Unaccounted Maintenance", amount: 2100000 },
-  { category: "Pending Infra Work", amount: 3200000 }
+  { category: "Monthly Deficit (Avg)", amount: 571000 },
+  { category: "Outstanding Maint.", amount: 1619000 },
 ];
 
 const expenseData = [
-  { name: "Water Supply (Tankers)", value: 550000, color: "hsl(var(--chart-2))", description: "100% reliant on private tankers. No govt water line available." },
-  { name: "Manpower & Security", value: 480000, color: "hsl(var(--chart-1))", description: "Guards, housekeeping, supervisors salaries." },
-  { name: "Maintenance Agency", value: 520000, color: "hsl(var(--chart-4))", description: "Facility Management Services (FMS) fixed contract." },
-  { name: "STP & Sewer Ops", value: 280000, color: "hsl(var(--chart-3))", description: "No municipal sewer line. High cost for STP operation & waste disposal." },
-  { name: "Electricity & DG Fuel", value: 620000, color: "hsl(var(--chart-5))", description: "Common area lighting, lifts, and high diesel consumption." }
+  { name: "Manpower (116 Staff)", value: 2484322, color: "hsl(var(--chart-1))", description: "Security (42), Housekeeping (30), Technical (27), etc." },
+  { name: "STP Treated Water", value: 394167, color: "hsl(var(--chart-2))", description: "Water treatment and disposal charges." },
+  { name: "Other AMCs (DG, Fire, CCTV)", value: 192829, color: "hsl(var(--chart-3))", description: "Annual maintenance for critical infrastructure." },
+  { name: "Lift AMC", value: 167071, color: "hsl(var(--chart-4))", description: "Elevator maintenance contract." },
+  { name: "Abante Management Fee", value: 150000, color: "hsl(var(--chart-5))", description: "Facility management agency fee." },
+  { name: "33 KV Line & Others", value: 133403 + 50540 + 34017 + 31086, color: "hsl(var(--warning))", description: "Line maintenance, vending, garbage, and regular water." }
 ];
 
 const incomeData = [
-  { source: "CAM Charges (Residents)", amount: 1850000, status: "Recurring" },
-  { source: "Electricity Prepaid Recharges", amount: 200000, status: "Recurring" },
-  { source: "Clubhouse/Facility Bookings", amount: 45000, status: "Variable" },
-  { source: "Vendor/Move-in Charges", amount: 55000, status: "Variable" }
+  { source: "Bank Interest (IDFC + HDFC)", amount: 392926, status: "Investment Return" },
+  { source: "Move In/Out & Penalties", amount: 66136, status: "Variable" },
+  { source: "Mutation Charges", amount: 55000, status: "Variable" },
+  { source: "Lift & Other Ads", amount: 38820, status: "Recurring" },
+  { source: "Rent (Keystone & Restaurant)", amount: 30000, status: "Recurring" },
+  { source: "Canopy By Mygate", amount: 12296, status: "Recurring" }
 ];
 
-const handoverAssets = [
-  { item: "Bank Account Balance Transferred", amount: 250000, status: "Received" },
-  { item: "Fixed Deposits (Corpus)", amount: 1500000, status: "Partial - ₹45L Pending" },
-  { item: "DG Set Diesel Stock", amount: 45000, status: "Received" },
-  { item: "Petty Cash", amount: 12000, status: "Received" }
+const electricityData = {
+  billing: 1691207,
+  expenditure: 1566545, // 1324142 (DHBVN) + 242403 (Diesel/DAFF)
+  surplus: 124662
+};
+
+const majorDefaulters = [
+  { flat: "E - 001", name: "Harsh Jain", amount: 172814 },
+  { flat: "E - 403", name: "Pavaninder Singh", amount: 156312 },
+  { flat: "A - 902", name: "Rahul Mehta", amount: 137605 },
+  { flat: "J - 704", name: "M. Animuthu", amount: 137605 },
+  { flat: "J - 703", name: "L. Saravanan", amount: 119914 }
 ];
 
-const billsToClear = [
-  { vendor: "Aqua Line Tankers", type: "Water Supply", period: "Last 2 Months", amount: "₹11,00,000", urgency: "Critical - Supply Risk" },
-  { vendor: "SecureGuard Solutions", type: "Manpower", period: "Last Month", amount: "₹4,80,000", urgency: "High - Strike Risk" },
-  { vendor: "Dakshin Haryana Bijli Vitran Nigam", type: "Electricity", period: "Current Month", amount: "₹3,50,000", urgency: "Critical - Disconnection" },
-  { vendor: "Elevate Lifts Co.", type: "Lift AMC", period: "Overdue 6 Months", amount: "₹4,50,000", urgency: "High - Safety Risk" },
-  { vendor: "ClearWater Solutions", type: "STP Maintenance", period: "Last 3 Months", amount: "₹3,20,000", urgency: "Medium" }
-];
-
-const documentStatus = [
-  { name: "Occupancy Certificate (OC)", status: "Missing", risk: "Critical" },
-  { name: "Completion Certificate (CC)", status: "Missing", risk: "Critical" },
-  { name: "Fire Safety NOC", status: "Expired", risk: "High" },
-  { name: "Pollution Control Board NOC", status: "Missing", risk: "High" },
-  { name: "Lift Safety Clearance", status: "Available", risk: "Low" },
-  { name: "Audited Financials (Past 3 Yrs)", status: "Incomplete", risk: "High" },
+const oneTimeExpenses = [
+  { item: "Ground Floor Lift Lobby", status: "Completed" },
+  { item: "Water Body & Cycle Stand", status: "Completed" },
+  { item: "Access Card & Biometric Sys", status: "Completed" },
+  { item: "Park Plus Boom Barrier", status: "Completed" },
+  { item: "Lift Cabin Cladding", status: "Pending" },
+  { item: "LED Signage & Bus Stand", status: "Pending" },
+  { item: "Installation of Borewell", status: "Pending" }
 ];
 
 export default function Dashboard() {
-  const totalExpense = expenseData.reduce((acc, curr) => acc + curr.value, 0);
-  const totalIncome = incomeData.reduce((acc, curr) => acc + curr.amount, 0);
-  const totalAssets = handoverAssets.reduce((acc, curr) => acc + curr.amount, 0);
-  const totalBillsPending = 2700000; 
+  const totalExpense = 4540171; // Total Maintenance Expense from PDF
+  const totalMonthlyBilling = 3969000; // Monthly Maintenance Billing from PDF
+  const totalAdditionalIncome = incomeData.reduce((acc, curr) => acc + curr.amount, 0);
 
   return (
     <div className="min-h-screen bg-background text-foreground p-6 md:p-10 font-sans pb-20">
@@ -105,40 +109,36 @@ export default function Dashboard() {
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-border/40 pb-6">
           <div>
             <div className="flex items-center gap-3 mb-2">
-              <Badge variant="destructive" className="bg-red-500/10 text-red-500 hover:bg-red-500/20 border-red-500/20">Financial Handover Risk</Badge>
-              <span className="text-sm text-muted-foreground uppercase tracking-wider font-semibold">Sector 77, Gurgaon</span>
+              <Badge variant="destructive" className="bg-red-500/10 text-red-500 hover:bg-red-500/20 border-red-500/20">Audit Mode</Badge>
+              <span className="text-sm text-muted-foreground uppercase tracking-wider font-semibold">Winter Hills 77, Gurgaon</span>
             </div>
-            <h1 className="text-3xl md:text-4xl font-bold tracking-tight">RWA Operations & Deficit Audit</h1>
+            <h1 className="text-3xl md:text-4xl font-bold tracking-tight">Society Expenses & Income Audit</h1>
             <p className="text-muted-foreground mt-2 max-w-3xl">
-              Analysis of available funds, income sources, operational expenses, and critical pending liabilities inherited by the new committee.
+              Financial performance review since handover (August 2024 to January 2025), highlighting maintenance deficits, operational costs, and capital expenditures.
             </p>
           </div>
-          <div className="flex gap-4">
-            <div className="text-right border-r border-border/50 pr-4">
-              <p className="text-sm text-muted-foreground mb-1">Assets Handed Over</p>
-              <p className="text-2xl font-mono font-bold text-green-500">₹{(totalAssets/100000).toFixed(2)} L</p>
-            </div>
-            <div className="text-right">
-              <p className="text-sm text-muted-foreground mb-1">Immediate Liabilities</p>
-              <p className="text-2xl font-mono font-bold text-destructive">₹{(totalBillsPending/100000).toFixed(2)} L</p>
-            </div>
+          <div className="text-right">
+             <div className="flex items-center gap-2 justify-end mb-1">
+                <AlertTriangle className="h-4 w-4 text-orange-500" />
+                <p className="text-sm text-orange-500 font-medium">Proposed Maint. Hike</p>
+             </div>
+            <p className="text-3xl font-mono font-bold text-foreground">0.77<span className="text-lg text-muted-foreground font-sans">/sqft</span></p>
           </div>
         </div>
 
         {/* High Level Financial Overview */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <Card className="border-green-500/20 bg-green-500/5 relative overflow-hidden">
-            <div className="absolute top-0 right-0 p-4 opacity-20">
-              <PiggyBank size={40} className="text-green-500" />
+          <Card className="border-border/40 bg-card/40 backdrop-blur-sm relative overflow-hidden">
+            <div className="absolute top-0 right-0 p-4 opacity-10">
+              <Receipt size={40} className="text-foreground" />
             </div>
             <CardHeader className="pb-2">
-              <CardDescription className="text-green-500/80 font-medium">Total Monthly Income</CardDescription>
-              <CardTitle className="text-2xl font-mono text-green-500">₹{(totalIncome/100000).toFixed(2)} L</CardTitle>
+              <CardDescription className="font-medium">Avg Monthly Billing (CAM)</CardDescription>
+              <CardTitle className="text-2xl font-mono">₹{(totalMonthlyBilling/100000).toFixed(2)} L</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="flex items-center gap-1 text-xs text-muted-foreground mt-1">
-                <ArrowUpRight className="h-3 w-3 text-green-500" />
-                From CAM & other charges
+                Standard maintenance collection
               </div>
             </CardContent>
           </Card>
@@ -148,149 +148,60 @@ export default function Dashboard() {
               <Activity size={40} className="text-destructive" />
             </div>
             <CardHeader className="pb-2">
-              <CardDescription className="text-destructive/80 font-medium">Total Monthly OPEX</CardDescription>
+              <CardDescription className="text-destructive/80 font-medium">Avg Monthly Expenses</CardDescription>
               <CardTitle className="text-2xl font-mono text-destructive">₹{(totalExpense/100000).toFixed(2)} L</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="flex items-center gap-1 text-xs text-muted-foreground mt-1">
                 <ArrowDownRight className="h-3 w-3 text-destructive" />
-                Running expenses
+                Actual operational cost
               </div>
             </CardContent>
           </Card>
 
           <Card className="border-orange-500/20 bg-orange-500/5 relative overflow-hidden">
             <div className="absolute top-0 right-0 p-4 opacity-20">
-              <AlertTriangle size={40} className="text-orange-500" />
+              <TrendingDown size={40} className="text-orange-500" />
             </div>
             <CardHeader className="pb-2">
-              <CardDescription className="text-orange-500/80 font-medium">Monthly Deficit</CardDescription>
-              <CardTitle className="text-2xl font-mono text-orange-500">₹{((totalExpense - totalIncome)/100000).toFixed(2)} L</CardTitle>
+              <CardDescription className="text-orange-500/80 font-medium">Avg Monthly Deficit</CardDescription>
+              <CardTitle className="text-2xl font-mono text-orange-500">₹5.71 L</CardTitle>
             </CardHeader>
             <CardContent>
-               <p className="text-xs text-muted-foreground mt-1">Cash burn requiring CAM hike.</p>
+               <p className="text-xs text-muted-foreground mt-1">Shortfall requiring CAM increase.</p>
             </CardContent>
           </Card>
 
-          <Card className="border-red-500/20 bg-red-500/5 relative overflow-hidden">
+          <Card className="border-green-500/20 bg-green-500/5 relative overflow-hidden">
             <div className="absolute top-0 right-0 p-4 opacity-20">
-              <ShieldAlert size={40} className="text-red-500" />
+              <PiggyBank size={40} className="text-green-500" />
             </div>
             <CardHeader className="pb-2">
-              <CardDescription className="text-red-500/80 font-medium">Missing Corpus Fund</CardDescription>
-              <CardTitle className="text-2xl font-mono text-red-500">₹45.0 L</CardTitle>
+              <CardDescription className="text-green-500/80 font-medium">Avg Additional Income</CardDescription>
+              <CardTitle className="text-2xl font-mono text-green-500">₹{(totalAdditionalIncome/100000).toFixed(2)} L</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-xs text-muted-foreground mt-1">Builder yet to transfer.</p>
+              <p className="text-xs text-muted-foreground mt-1">Used to bridge collection gaps.</p>
             </CardContent>
           </Card>
         </div>
 
-        {/* Assets vs Income Row */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          
-          {/* Handover Assets Table */}
-          <Card className="border-border/40 shadow-xl bg-card/40 backdrop-blur-sm">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Banknote className="h-5 w-5 text-green-500" />
-                Funds & Assets Handed Over
-              </CardTitle>
-              <CardDescription>What the new committee actually received in the bank vs what is pending.</CardDescription>
-            </CardHeader>
-            <CardContent>
-               <div className="overflow-x-auto rounded-md border border-border/40">
-                <Table>
-                  <TableHeader className="bg-muted/50">
-                    <TableRow>
-                      <TableHead>Asset / Fund Type</TableHead>
-                      <TableHead className="text-right">Amount (₹)</TableHead>
-                      <TableHead>Transfer Status</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {handoverAssets.map((asset, i) => (
-                      <TableRow key={i}>
-                        <TableCell className="font-medium">{asset.item}</TableCell>
-                        <TableCell className="text-right font-mono">{asset.amount.toLocaleString('en-IN')}</TableCell>
-                        <TableCell>
-                          <Badge 
-                            variant="secondary"
-                            className={
-                              asset.status.includes("Pending") ? "bg-orange-500/10 text-orange-500 border-orange-500/20" :
-                              "bg-green-500/10 text-green-500 border-green-500/20"
-                            }
-                          >
-                            {asset.status}
-                          </Badge>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Income Sources */}
-          <Card className="border-border/40 shadow-xl bg-card/40 backdrop-blur-sm">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Wallet className="h-5 w-5 text-primary-foreground" />
-                Monthly Income Sources
-              </CardTitle>
-              <CardDescription>Total available recurring revenue streams to run the society.</CardDescription>
-            </CardHeader>
-            <CardContent>
-               <div className="overflow-x-auto rounded-md border border-border/40">
-                <Table>
-                  <TableHeader className="bg-muted/50">
-                    <TableRow>
-                      <TableHead>Income Source</TableHead>
-                      <TableHead className="text-right">Amount (₹)</TableHead>
-                      <TableHead>Type</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {incomeData.map((income, i) => (
-                      <TableRow key={i}>
-                        <TableCell className="font-medium">{income.source}</TableCell>
-                        <TableCell className="text-right font-mono text-green-500">{income.amount.toLocaleString('en-IN')}</TableCell>
-                        <TableCell>
-                           <Badge variant="outline" className="text-muted-foreground">{income.status}</Badge>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                    <TableRow className="bg-muted/30 font-bold">
-                      <TableCell>Total Monthly Income:</TableCell>
-                      <TableCell className="text-right font-mono text-green-500">₹{totalIncome.toLocaleString('en-IN')}</TableCell>
-                      <TableCell></TableCell>
-                    </TableRow>
-                  </TableBody>
-                </Table>
-              </div>
-            </CardContent>
-          </Card>
-
-        </div>
-
-
-        {/* Running Expenses Breakdown - Enhanced */}
+        {/* Operational Expenses Breakdown */}
         <Card className="border-border/40 shadow-xl bg-card/40 backdrop-blur-sm">
           <CardHeader>
             <div className="flex items-center justify-between">
               <div>
                 <CardTitle className="flex items-center gap-2">
                   <Activity className="text-primary-foreground h-5 w-5" />
-                  Monthly Running Expenses (OPEX) vs Income
+                  Monthly Maintenance Expense Breakdown
                 </CardTitle>
-                <CardDescription>Detailed breakdown of where funds are being spent daily.</CardDescription>
+                <CardDescription>Major components driving the ₹45.4L total maintenance cost.</CardDescription>
               </div>
             </div>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center mt-4">
-              <div className="h-[300px] w-full flex items-center justify-center">
+              <div className="h-[320px] w-full flex items-center justify-center">
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
                     <Pie
@@ -314,87 +225,62 @@ export default function Dashboard() {
                 </ResponsiveContainer>
               </div>
               
-              <div className="space-y-6">
+              <div className="space-y-4">
                 {expenseData.map((expense, idx) => (
-                  <div key={idx} className="space-y-2">
+                  <div key={idx} className="space-y-1.5">
                     <div className="flex justify-between items-center text-sm">
                       <span className="font-medium flex items-center gap-2">
                         <span className="w-3 h-3 rounded-full" style={{ backgroundColor: expense.color }}></span>
                         {expense.name}
                       </span>
-                      <span className="font-mono font-bold text-destructive">₹{(expense.value/100000).toFixed(2)}L</span>
+                      <span className="font-mono font-bold">₹{(expense.value/100000).toFixed(2)}L</span>
                     </div>
                     <div className="flex items-center gap-4">
-                      <Progress value={(expense.value / totalExpense) * 100} className="h-2" style={{ "--progress-background": expense.color } as any} />
+                      <Progress value={(expense.value / totalExpense) * 100} className="h-1.5" style={{ "--progress-background": expense.color } as any} />
                       <span className="text-xs text-muted-foreground min-w-[3ch]">{Math.round((expense.value / totalExpense) * 100)}%</span>
                     </div>
-                    <p className="text-xs text-muted-foreground pl-5 border-l border-border/50">{expense.description}</p>
+                    <p className="text-[11px] text-muted-foreground pl-5">{expense.description}</p>
                   </div>
                 ))}
               </div>
             </div>
           </CardContent>
-          <CardFooter className="bg-muted/20 border-t border-border/40 py-4 flex flex-col md:flex-row items-center justify-between gap-4">
-              <div className="flex items-center gap-3 text-sm">
-                <span className="text-muted-foreground">Total Income: <strong className="text-green-500">₹{(totalIncome/100000).toFixed(2)} Lakhs</strong></span>
-              </div>
-              <ArrowRight className="hidden md:block h-4 w-4 text-muted-foreground" />
-              <div className="flex items-center gap-3 text-sm">
-                <span className="text-muted-foreground">Total OPEX: <strong className="text-destructive">₹{(totalExpense/100000).toFixed(2)} Lakhs</strong></span>
-              </div>
-              <ArrowRight className="hidden md:block h-4 w-4 text-muted-foreground" />
-              <Badge variant="destructive" className="bg-destructive/10 text-destructive border-destructive/20 text-sm py-1">
-                Net Deficit: ₹{((totalExpense - totalIncome)/100000).toFixed(2)} Lakhs / mo
-              </Badge>
-          </CardFooter>
         </Card>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-           {/* Liabilities Table */}
-          <Card className="border-border/40 shadow-xl bg-card/40 backdrop-blur-sm lg:col-span-2">
+          
+          {/* Income Sources */}
+          <Card className="border-border/40 shadow-xl bg-card/40 backdrop-blur-sm">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <FileX2 className="h-5 w-5 text-destructive" />
-                Pending Bills & Immediate Liabilities
+                <Banknote className="h-5 w-5 text-green-500" />
+                Additional Incomes (Non-CAM)
               </CardTitle>
-              <CardDescription>Unpaid invoices left by the outgoing body that the new committee must clear immediately.</CardDescription>
+              <CardDescription>Sources of revenue helping bridge the deficit gap.</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="overflow-x-auto rounded-md border border-border/40">
+               <div className="overflow-x-auto rounded-md border border-border/40">
                 <Table>
                   <TableHeader className="bg-muted/50">
                     <TableRow>
-                      <TableHead>Vendor / Agency</TableHead>
-                      <TableHead>Service Area</TableHead>
-                      <TableHead>Pending Period</TableHead>
-                      <TableHead className="text-right">Outstanding Amount</TableHead>
-                      <TableHead>Risk / Urgency</TableHead>
+                      <TableHead>Income Source</TableHead>
+                      <TableHead className="text-right">Avg Monthly (₹)</TableHead>
+                      <TableHead>Type</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {billsToClear.map((bill, i) => (
+                    {incomeData.map((income, i) => (
                       <TableRow key={i}>
-                        <TableCell className="font-medium">{bill.vendor}</TableCell>
-                        <TableCell>{bill.type}</TableCell>
-                        <TableCell className="text-muted-foreground">{bill.period}</TableCell>
-                        <TableCell className="text-right font-mono font-bold text-destructive">{bill.amount}</TableCell>
+                        <TableCell className="font-medium">{income.source}</TableCell>
+                        <TableCell className="text-right font-mono text-green-500">{income.amount.toLocaleString('en-IN')}</TableCell>
                         <TableCell>
-                          <Badge 
-                            variant="secondary"
-                            className={
-                              bill.urgency.includes("Critical") ? "bg-destructive/10 text-destructive border-destructive/20" :
-                              bill.urgency.includes("High") ? "bg-orange-500/10 text-orange-500 border-orange-500/20" :
-                              "bg-yellow-500/10 text-yellow-600 border-yellow-500/20"
-                            }
-                          >
-                            {bill.urgency}
-                          </Badge>
+                           <Badge variant="outline" className="text-muted-foreground font-normal">{income.status}</Badge>
                         </TableCell>
                       </TableRow>
                     ))}
                     <TableRow className="bg-muted/30 font-bold">
-                      <TableCell colSpan={3} className="text-right text-muted-foreground">Total Immediate Cash Required:</TableCell>
-                      <TableCell className="text-right font-mono text-destructive">₹27,00,000</TableCell>
+                      <TableCell>Total Additional Income:</TableCell>
+                      <TableCell className="text-right font-mono text-green-500">₹{totalAdditionalIncome.toLocaleString('en-IN')}</TableCell>
                       <TableCell></TableCell>
                     </TableRow>
                   </TableBody>
@@ -402,80 +288,124 @@ export default function Dashboard() {
               </div>
             </CardContent>
           </Card>
+
+          {/* Electricity Economics */}
+          <Card className="border-border/40 shadow-xl bg-card/40 backdrop-blur-sm">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Zap className="h-5 w-5 text-yellow-500" />
+                Electricity: Expense vs Recovery
+              </CardTitle>
+              <CardDescription>Average monthly breakdown of power economics.</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+               <div className="grid grid-cols-2 gap-4">
+                  <div className="p-4 rounded-lg bg-muted/30 border border-border/40">
+                     <p className="text-sm text-muted-foreground mb-1">DHBVN Bill</p>
+                     <p className="text-xl font-mono">₹13.24 L</p>
+                  </div>
+                  <div className="p-4 rounded-lg bg-muted/30 border border-border/40">
+                     <p className="text-sm text-muted-foreground mb-1">Diesel & DAFF</p>
+                     <p className="text-xl font-mono">₹2.42 L</p>
+                  </div>
+               </div>
+
+               <div className="space-y-3">
+                 <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">Total Power Expenditure</span>
+                    <span className="font-mono text-destructive font-medium">₹15.66 L</span>
+                 </div>
+                 <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">Total Billed to Residents</span>
+                    <span className="font-mono text-green-500 font-medium">₹16.91 L</span>
+                 </div>
+                 <div className="h-px w-full bg-border"></div>
+                 <div className="flex justify-between text-sm font-bold">
+                    <span>Net Surplus / Difference</span>
+                    <span className="font-mono text-primary">₹1.24 L</span>
+                 </div>
+                 <p className="text-xs text-muted-foreground text-right mt-2">Proposal: Decrease CAE by 17 paise/sqft</p>
+               </div>
+            </CardContent>
+          </Card>
+
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Chart Section */}
-          <Card className="lg:col-span-1 border-border/40 shadow-xl bg-card/40 backdrop-blur-sm">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+           {/* Defaulters Table */}
+          <Card className="border-border/40 shadow-xl bg-card/40 backdrop-blur-sm">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <AlertCircle className="text-destructive h-5 w-5" />
-                Capital Deficits
+                <UserX className="h-5 w-5 text-destructive" />
+                Top Maintenance Defaulters
               </CardTitle>
-              <CardDescription>Major funds missing from handover</CardDescription>
+              <CardDescription>Total Outstanding Amount: ₹16.19 Lakhs</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="h-[250px] w-full mt-4">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={deficitData} layout="vertical" margin={{ top: 5, right: 30, left: 10, bottom: 5 }}>
-                    <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="hsl(var(--border))" />
-                    <XAxis type="number" tickFormatter={(value) => `₹${value/100000}L`} stroke="hsl(var(--muted-foreground))" fontSize={11} />
-                    <YAxis dataKey="category" type="category" stroke="hsl(var(--muted-foreground))" fontSize={11} width={100} />
-                    <Tooltip 
-                      cursor={{ fill: 'hsl(var(--muted)/0.5)' }}
-                      contentStyle={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))', color: 'hsl(var(--foreground))' }}
-                      formatter={(value: number) => [`₹${(value/100000).toFixed(2)} Lakhs`, 'Amount']}
-                    />
-                    <Bar dataKey="amount" radius={[0, 4, 4, 0]}>
-                      {deficitData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={`hsl(var(--chart-${index + 1}))`} />
-                      ))}
-                    </Bar>
-                  </BarChart>
-                </ResponsiveContainer>
+              <div className="overflow-x-auto rounded-md border border-border/40">
+                <Table>
+                  <TableHeader className="bg-muted/50">
+                    <TableRow>
+                      <TableHead>Flat No.</TableHead>
+                      <TableHead>Resident Name</TableHead>
+                      <TableHead className="text-right">Outstanding (₹)</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {majorDefaulters.map((defaulter, i) => (
+                      <TableRow key={i}>
+                        <TableCell className="font-medium font-mono">{defaulter.flat}</TableCell>
+                        <TableCell>{defaulter.name}</TableCell>
+                        <TableCell className="text-right font-mono text-destructive">{defaulter.amount.toLocaleString('en-IN')}</TableCell>
+                      </TableRow>
+                    ))}
+                    <TableRow className="bg-muted/10 text-muted-foreground text-sm">
+                      <TableCell colSpan={2}>+ 20 Other Defaulters</TableCell>
+                      <TableCell className="text-right">₹7.91 L</TableCell>
+                    </TableRow>
+                  </TableBody>
+                </Table>
               </div>
             </CardContent>
           </Card>
 
-          {/* Statutory Documents Status */}
-          <Card className="lg:col-span-2 border-border/40 shadow-xl bg-card/40 backdrop-blur-sm">
-            <CardHeader>
+          {/* Capital Projects */}
+          <Card className="border-border/40 shadow-xl bg-card/40 backdrop-blur-sm">
+             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <FileWarning className="text-warning h-5 w-5" />
-                Statutory Compliance Handover
+                <Hammer className="h-5 w-5 text-primary-foreground" />
+                Society Upgradation Projects
               </CardTitle>
-              <CardDescription>Status of mandatory documents received from builder/previous body</CardDescription>
+              <CardDescription>One-time expenses averaging ₹9.80 Lakhs/month.</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {documentStatus.map((doc, idx) => (
-                  <div key={idx} className="flex flex-col gap-1.5 p-4 rounded-lg bg-muted/30 border border-border/30">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium">{doc.name}</span>
-                      <Badge 
-                        variant="outline" 
-                        className={
-                          doc.status === "Missing" ? "border-destructive text-destructive" :
-                          doc.status === "Expired" ? "border-warning text-warning" :
-                          doc.status === "Incomplete" ? "border-orange-500 text-orange-500" :
-                          "border-green-500 text-green-500"
-                        }
-                      >
-                        {doc.status}
-                      </Badge>
-                    </div>
-                    <div className="flex items-center justify-between text-xs text-muted-foreground mt-2">
-                      <span>Risk Level:</span>
-                      <span className={
-                        doc.risk === "Critical" ? "text-destructive font-bold" :
-                        doc.risk === "High" ? "text-warning font-semibold" : ""
-                      }>{doc.risk}</span>
-                    </div>
+               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-3">
+                     <h4 className="text-sm font-semibold border-b border-border/50 pb-1">Completed Works</h4>
+                     <ul className="space-y-2">
+                        {oneTimeExpenses.filter(e => e.status === "Completed").map((item, idx) => (
+                           <li key={idx} className="flex items-center gap-2 text-sm text-muted-foreground">
+                              <div className="h-1.5 w-1.5 rounded-full bg-green-500"></div>
+                              {item.item}
+                           </li>
+                        ))}
+                     </ul>
                   </div>
-                ))}
-              </div>
+                  <div className="space-y-3">
+                     <h4 className="text-sm font-semibold border-b border-border/50 pb-1">Pending Works</h4>
+                     <ul className="space-y-2">
+                        {oneTimeExpenses.filter(e => e.status === "Pending").map((item, idx) => (
+                           <li key={idx} className="flex items-center gap-2 text-sm text-muted-foreground">
+                              <div className="h-1.5 w-1.5 rounded-full bg-orange-500"></div>
+                              {item.item}
+                           </li>
+                        ))}
+                     </ul>
+                  </div>
+               </div>
             </CardContent>
           </Card>
+
         </div>
 
       </div>
