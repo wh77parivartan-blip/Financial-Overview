@@ -253,7 +253,7 @@ export default function Dashboard() {
               <div>
                 <CardTitle className="flex items-center gap-2">
                   <Building className="text-primary-foreground h-5 w-5" />
-                  Builder Handover: Received vs Pending (Kis chiz ka kitna paisa bacha hai)
+                  Builder Handover: Received vs Pending
                 </CardTitle>
                 <CardDescription>Graphical and tabular representation of what we received vs what the builder still owes us or left unpaid.</CardDescription>
               </div>
