@@ -29,13 +29,6 @@
   </head>
   <body>
     <div id="root"></div>
-    <script>
-      // Set hash to "/" if not present before React loads
-      // This ensures proper routing initialization
-      if (!window.location.hash) {
-        window.location.hash = "/";
-      }
-    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
