@@ -142,20 +142,20 @@ export default function Dashboard() {
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-border/40 pb-6">
           <div>
             <div className="flex items-center gap-3 mb-2">
-              <Badge variant="destructive" className="bg-red-500/10 text-red-500 hover:bg-red-500/20 border-red-500/20">Audit Mode</Badge>
+              <Badge variant="secondary" className="bg-primary/10 text-primary hover:bg-primary/20 border-primary/20 px-3 py-1 text-sm rounded-full">Financial Overview</Badge>
               <span className="text-sm text-muted-foreground uppercase tracking-wider font-semibold">Winter Hills 77, Gurgaon</span>
             </div>
-            <h1 className="text-3xl md:text-4xl font-bold tracking-tight">Society Handover & Financial Audit</h1>
-            <p className="text-muted-foreground mt-2 max-w-3xl">
-              Comprehensive visual financial review showing Builder Handover status, Total Income Sources, Expenses, and pending liabilities.
+            <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground">Society Financial Dashboard</h1>
+            <p className="text-muted-foreground mt-2 max-w-3xl text-lg">
+              A transparent view of our community's finances, including income, expenses, and pending handover items from the builder.
             </p>
           </div>
           <div className="text-right">
              <div className="flex items-center gap-2 justify-end mb-1">
-                <AlertTriangle className="h-4 w-4 text-orange-500" />
-                <p className="text-sm text-orange-500 font-medium">Net Cashflow (6 mo avg)</p>
+                <Activity className="h-4 w-4 text-primary" />
+                <p className="text-sm text-primary font-medium">Net Cashflow (6 mo avg)</p>
              </div>
-            <p className="text-3xl font-mono font-bold text-destructive">-₹1.57<span className="text-lg text-muted-foreground font-sans"> L / mo</span></p>
+            <p className="text-3xl font-mono font-bold text-foreground">-₹1.57<span className="text-lg text-muted-foreground font-sans"> L / mo</span></p>
           </div>
         </div>
 
