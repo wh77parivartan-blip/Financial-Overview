@@ -9,17 +9,14 @@ import Dashboard from "@/pages/dashboard";
 function App() {
   const [location, setLocation] = React.useState(() => {
     const hash = window.location.hash.slice(1) || "/";
+    console.log("Initial location from hash:", hash);
     return hash;
   });
 
   React.useEffect(() => {
-    // Ensure hash is set on initial load
-    if (!window.location.hash) {
-      window.location.hash = "/";
-    }
-
     const handleHashChange = () => {
       const hash = window.location.hash.slice(1) || "/";
+      console.log("Hash changed to:", hash);
       setLocation(hash);
     };
 
@@ -30,6 +27,7 @@ function App() {
   // Simple route matching
   const renderPage = () => {
     const path = location.split("?")[0]; // Remove query params
+    console.log("Rendering for path:", path);
 
     switch (path) {
       case "/":

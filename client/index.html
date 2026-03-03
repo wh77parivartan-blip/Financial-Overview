@@ -18,9 +18,24 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+      // Initialize hash-based routing before React loads
+      (function() {
+        if (!window.location.hash) {
+          window.history.replaceState(null, '', window.location.pathname + '#/');
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>
+    <script>
+      // Set hash to "/" if not present before React loads
+      // This ensures proper routing initialization
+      if (!window.location.hash) {
+        window.location.hash = "/";
+      }
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
