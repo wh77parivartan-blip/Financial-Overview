@@ -1,5 +1,5 @@
 import React from "react";
-import { Switch, Route, Router } from "wouter";
+import { Switch, Route } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
@@ -7,24 +7,28 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/not-found";
 import Dashboard from "@/pages/dashboard";
 
-// Hash-based routing for GitHub Pages
+// Custom hook for hash-based location with wouter
 function useHashLocation() {
   const [location, setLocation] = React.useState(() => {
-    return window.location.hash.slice(1) || "/";
+    const hash = window.location.hash.slice(1) || "/";
+    return hash;
   });
 
   React.useEffect(() => {
-    const handler = () => {
-      setLocation(window.location.hash.slice(1) || "/");
+    const updateLocation = () => {
+      const hash = window.location.hash.slice(1) || "/";
+      setLocation(hash);
     };
 
-    window.addEventListener("hashchange", handler);
-    return () => window.removeEventListener("hashchange", handler);
+    window.addEventListener("hashchange", updateLocation);
+    return () => window.removeEventListener("hashchange", updateLocation);
   }, []);
 
-  return [location, (newLocation: string) => {
-    window.location.hash = newLocation;
-  }];
+  const navigate = React.useCallback((path: string) => {
+    window.location.hash = path;
+  }, []);
+
+  return [location, navigate] as const;
 }
 
 function App() {
@@ -34,12 +38,10 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <Toaster />
-        <Router location={location} navigator={{ push: navigate }}>
-          <Switch>
-            <Route path="/" component={Dashboard}/>
-            <Route component={NotFound} />
-          </Switch>
-        </Router>
+        <Switch location={location}>
+          <Route path="/" component={Dashboard}/>
+          <Route component={NotFound} />
+        </Switch>
       </TooltipProvider>
     </QueryClientProvider>
   );
