@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Redirecting...</title>
+    <script>
+      // Get the path and redirect to index.html with the path as query param
+      const path = window.location.pathname.split('/').pop();
+      const segment = window.location.pathname
+        .split('/')
+        .filter(p => p && p !== 'Financial-Overview')
+        .join('/');
+      
+      // Redirect to the root with the path preserved
+      if (segment) {
+        window.location.replace(
+          window.location.pathname.split('/Financial-Overview')[0] +
+          '/Financial-Overview/?redirect=' +
+          encodeURIComponent('/' + segment)
+        );
+      } else {
+        window.location.replace(
+          window.location.pathname.split('/Financial-Overview')[0] +
+          '/Financial-Overview/'
+        );
+      }
+    </script>
+  </head>
+  <body>
+    Redirecting...
+  </body>
+</html>
