@@ -7,6 +7,11 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { 
   AlertTriangle, 
   TrendingDown, 
@@ -134,10 +139,70 @@ const handoverAssets = [
 ];
 
 const vendorProjects = [
-  { id: "PRJ-001", title: "Lift Cabin Cladding", type: "Civil/Interior", budget: "₹8.5 Lakhs", deadline: "30 Apr 2025", status: "Open for Bidding", description: "Complete interior cladding and aesthetic upgrade for all 14 passenger lifts. Requires high quality SS finish and new lighting." },
-  { id: "PRJ-002", title: "LED Signage & Bus Stand", type: "Fabrication", budget: "₹2.2 Lakhs", deadline: "15 May 2025", status: "Open for Bidding", description: "Fabrication of society main entry LED signage and construction of a covered school bus waiting stand for children." },
-  { id: "PRJ-003", title: "New Borewell Installation", type: "Plumbing/Civil", budget: "₹12.0 Lakhs", deadline: "Pending Approval", status: "Upcoming", description: "Drilling and complete installation of a new 450ft borewell including submersible pumps, piping to main WTP, and electrical panel." },
-  { id: "PRJ-004", title: "Basement Seepage Repair", type: "Waterproofing", budget: "To be estimated", deadline: "Urgent", status: "Open for Bidding", description: "Identification and permanent waterproofing treatment of active seepage points in Basement 1 and 2 near expansion joints." }
+  { 
+    id: "PRJ-001", 
+    title: "Lift Cabin Cladding", 
+    type: "Civil/Interior", 
+    budget: "₹8.5 Lakhs", 
+    deadline: "30 Apr 2025", 
+    status: "Open for Bidding", 
+    description: "Complete interior cladding and aesthetic upgrade for all 14 passenger lifts. Requires high quality SS finish and new lighting.",
+    scopeOfWork: [
+      "Removal of existing damaged cladding in 14 passenger lifts.",
+      "Supply and installation of 304 Grade Stainless Steel (Hairline Finish) panels.",
+      "Installation of new LED profile lighting inside cabins.",
+      "Replacement of PVC flooring with heavy-duty anti-skid granite.",
+      "All work to be done during non-peak hours (11 AM to 4 PM)."
+    ]
+  },
+  { 
+    id: "PRJ-002", 
+    title: "LED Signage & Bus Stand", 
+    type: "Fabrication", 
+    budget: "₹2.2 Lakhs", 
+    deadline: "15 May 2025", 
+    status: "Open for Bidding", 
+    description: "Fabrication of society main entry LED signage and construction of a covered school bus waiting stand for children.",
+    scopeOfWork: [
+      "Design and fabrication of 12x4 ft LED backlit 3D acrylic signage.",
+      "Construction of 15x8 ft MS steel framed bus waiting shelter.",
+      "Polycarbonate roofing for the shelter.",
+      "Installation of 4 seating benches inside the shelter.",
+      "Painting and civil foundation work included."
+    ]
+  },
+  { 
+    id: "PRJ-003", 
+    title: "New Borewell Installation", 
+    type: "Plumbing/Civil", 
+    budget: "₹12.0 Lakhs", 
+    deadline: "Pending Approval", 
+    status: "Upcoming", 
+    description: "Drilling and complete installation of a new 450ft borewell including submersible pumps, piping to main WTP, and electrical panel.",
+    scopeOfWork: [
+      "Rig drilling up to 450-500 feet depth.",
+      "Supply and installation of 10HP Submersible Pump (KSB/CRI).",
+      "UPVC piping from borewell to the main WTP tank (approx 150 meters).",
+      "Installation of automated electrical starter panel.",
+      "CGWA compliance documentation assistance."
+    ]
+  },
+  { 
+    id: "PRJ-004", 
+    title: "Basement Seepage Repair", 
+    type: "Waterproofing", 
+    budget: "To be estimated", 
+    deadline: "Urgent", 
+    status: "Open for Bidding", 
+    description: "Identification and permanent waterproofing treatment of active seepage points in Basement 1 and 2 near expansion joints.",
+    scopeOfWork: [
+      "PU injection grouting at 12 identified active leakage points.",
+      "V-groove cutting and filling with polymer modified mortar along expansion joints.",
+      "Application of crystalline waterproofing coating (2 coats).",
+      "Core cutting for pressure release if necessary.",
+      "Minimum 5-year guarantee required on the treated areas."
+    ]
+  }
 ];
 
 const topIssues = [
@@ -704,10 +769,83 @@ export default function Dashboard() {
                     </div>
                   </div>
                   
-                  <div className="pt-2">
-                    <button className="w-full bg-primary/10 text-primary hover:bg-primary/20 hover:text-primary font-medium py-2 px-4 rounded-md text-sm transition-colors flex items-center justify-center gap-2">
-                      View Scope & Bid <ChevronRight className="h-4 w-4" />
-                    </button>
+                  <div className="pt-2 mt-auto">
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <button className="w-full bg-primary/10 text-primary hover:bg-primary/20 hover:text-primary font-medium py-2 px-4 rounded-md text-sm transition-colors flex items-center justify-center gap-2">
+                          View Scope & Bid <ChevronRight className="h-4 w-4" />
+                        </button>
+                      </DialogTrigger>
+                      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+                        <DialogHeader>
+                          <div className="flex items-center gap-2 mb-2">
+                            <Badge variant="outline">{project.id}</Badge>
+                            <Badge className="bg-primary/10 text-primary hover:bg-primary/20 border-primary/20">{project.type}</Badge>
+                          </div>
+                          <DialogTitle className="text-2xl">{project.title}</DialogTitle>
+                          <DialogDescription className="text-base text-foreground mt-2">
+                            {project.description}
+                          </DialogDescription>
+                        </DialogHeader>
+
+                        <div className="grid grid-cols-2 gap-4 py-4 border-y border-border/40 my-2">
+                          <div>
+                            <p className="text-sm text-muted-foreground">Estimated Budget</p>
+                            <p className="font-mono font-bold text-lg">{project.budget}</p>
+                          </div>
+                          <div>
+                            <p className="text-sm text-muted-foreground">Submission Deadline</p>
+                            <p className="font-bold text-lg">{project.deadline}</p>
+                          </div>
+                        </div>
+
+                        <div className="space-y-4">
+                          <h4 className="font-bold flex items-center gap-2 text-lg">
+                            <Hammer className="h-4 w-4 text-primary" /> Scope of Work
+                          </h4>
+                          <ul className="space-y-2 list-disc pl-5 text-muted-foreground">
+                            {project.scopeOfWork.map((task, i) => (
+                              <li key={i} className="pl-1">{task}</li>
+                            ))}
+                          </ul>
+                        </div>
+
+                        <div className="mt-6 pt-6 border-t border-border/40">
+                          <h4 className="font-bold text-lg mb-4">Submit Your Bid</h4>
+                          <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); alert('Bid submitted successfully! (This is a mockup)'); }}>
+                            <div className="grid grid-cols-2 gap-4">
+                              <div className="space-y-2">
+                                <Label htmlFor={`company-${project.id}`}>Company Name</Label>
+                                <Input id={`company-${project.id}`} placeholder="Enter your company name" required />
+                              </div>
+                              <div className="space-y-2">
+                                <Label htmlFor={`contact-${project.id}`}>Contact Person</Label>
+                                <Input id={`contact-${project.id}`} placeholder="Name & Phone number" required />
+                              </div>
+                            </div>
+                            <div className="space-y-2">
+                              <Label htmlFor={`email-${project.id}`}>Email Address</Label>
+                              <Input id={`email-${project.id}`} type="email" placeholder="vendor@example.com" required />
+                            </div>
+                            <div className="grid grid-cols-2 gap-4">
+                              <div className="space-y-2">
+                                <Label htmlFor={`bid-${project.id}`}>Your Bid Amount (₹)</Label>
+                                <Input id={`bid-${project.id}`} type="number" placeholder="E.g. 800000" required />
+                              </div>
+                              <div className="space-y-2">
+                                <Label htmlFor={`time-${project.id}`}>Estimated Time to Complete</Label>
+                                <Input id={`time-${project.id}`} placeholder="E.g. 30 Days" required />
+                              </div>
+                            </div>
+                            <div className="space-y-2">
+                              <Label htmlFor={`notes-${project.id}`}>Additional Notes / Terms</Label>
+                              <Textarea id={`notes-${project.id}`} placeholder="Any special conditions or materials to highlight..." />
+                            </div>
+                            <Button type="submit" className="w-full mt-4">Submit Official Bid</Button>
+                          </form>
+                        </div>
+                      </DialogContent>
+                    </Dialog>
                   </div>
                 </CardContent>
               </Card>
