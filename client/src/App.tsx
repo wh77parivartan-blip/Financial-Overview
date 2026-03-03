@@ -1,5 +1,4 @@
 import React from "react";
-import { Switch, Route } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
@@ -7,41 +6,44 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/not-found";
 import Dashboard from "@/pages/dashboard";
 
-// Custom hook for hash-based location with wouter
-function useHashLocation() {
+function App() {
   const [location, setLocation] = React.useState(() => {
     const hash = window.location.hash.slice(1) || "/";
     return hash;
   });
 
   React.useEffect(() => {
-    const updateLocation = () => {
+    // Ensure hash is set on initial load
+    if (!window.location.hash) {
+      window.location.hash = "/";
+    }
+
+    const handleHashChange = () => {
       const hash = window.location.hash.slice(1) || "/";
       setLocation(hash);
     };
 
-    window.addEventListener("hashchange", updateLocation);
-    return () => window.removeEventListener("hashchange", updateLocation);
+    window.addEventListener("hashchange", handleHashChange);
+    return () => window.removeEventListener("hashchange", handleHashChange);
   }, []);
 
-  const navigate = React.useCallback((path: string) => {
-    window.location.hash = path;
-  }, []);
+  // Simple route matching
+  const renderPage = () => {
+    const path = location.split("?")[0]; // Remove query params
 
-  return [location, navigate] as const;
-}
-
-function App() {
-  const [location, navigate] = useHashLocation();
+    switch (path) {
+      case "/":
+        return <Dashboard />;
+      default:
+        return <NotFound />;
+    }
+  };
 
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <Toaster />
-        <Switch location={location}>
-          <Route path="/" component={Dashboard}/>
-          <Route component={NotFound} />
-        </Switch>
+        {renderPage()}
       </TooltipProvider>
     </QueryClientProvider>
   );
