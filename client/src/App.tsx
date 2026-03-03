@@ -40,8 +40,41 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <Toaster />
-        {renderPage()}
+        <div 
+          className="min-h-screen w-full relative"
+          style={{
+            background: "linear-gradient(135deg, #E8F4F8 0%, #D4EFF7 50%, #C0EBF5 100%)",
+          }}
+        >
+          {/* Watermark */}
+          <div 
+            className="fixed inset-0 flex items-center justify-center pointer-events-none"
+            style={{
+              opacity: 0.08,
+              zIndex: 0,
+            }}
+          >
+            <div
+              className="text-center"
+              style={{
+                fontSize: "180px",
+                fontWeight: "700",
+                color: "#006BA6",
+                transform: "rotate(-15deg)",
+                whiteSpace: "nowrap",
+                letterSpacing: "2px",
+              }}
+            >
+              Parivartan
+            </div>
+          </div>
+
+          {/* Content */}
+          <div className="relative z-10">
+            <Toaster />
+            {renderPage()}
+          </div>
+        </div>
       </TooltipProvider>
     </QueryClientProvider>
   );
