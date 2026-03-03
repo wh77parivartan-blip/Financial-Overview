@@ -7,8 +7,8 @@ import { metaImagesPlugin } from "./vite-plugin-meta-images";
 
 export default defineConfig({
   // Configure base path for GitHub Pages deployment
-  // Change 'gh-pages' to your repository name if not using custom domain
-  base: process.env.VITE_BASE_PATH || "/",
+  // Use repository name as base path, or environment variable for custom domains
+  base: process.env.VITE_BASE_PATH || "/Financial-Overview/",
   plugins: [
     react(),
     runtimeErrorOverlay(),

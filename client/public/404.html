@@ -5,29 +5,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Redirecting...</title>
     <script>
-      // Get the path and redirect to index.html with the path as query param
-      const path = window.location.pathname.split('/').pop();
-      const segment = window.location.pathname
-        .split('/')
-        .filter(p => p && p !== 'Financial-Overview')
-        .join('/');
+      // Get the repository name from the current path
+      const pathSegments = window.location.pathname.split('/').filter(Boolean);
+      const basePath = '/Financial-Overview/';
       
-      // Redirect to the root with the path preserved
-      if (segment) {
-        window.location.replace(
-          window.location.pathname.split('/Financial-Overview')[0] +
-          '/Financial-Overview/?redirect=' +
-          encodeURIComponent('/' + segment)
-        );
+      // Preserve the path after the base
+      const currentPath = window.location.pathname;
+      const baseIndex = currentPath.indexOf(basePath);
+      
+      if (baseIndex !== -1) {
+        const pathAfterBase = currentPath.substring(baseIndex + basePath.length);
+        if (pathAfterBase && pathAfterBase !== '') {
+          // Redirect to app with the path preserved
+          window.location.replace(basePath + '?redirect=/' + pathAfterBase);
+        } else {
+          // Already at base, go to index
+          window.location.replace(basePath);
+        }
       } else {
-        window.location.replace(
-          window.location.pathname.split('/Financial-Overview')[0] +
-          '/Financial-Overview/'
-        );
+        // Fallback redirect
+        window.location.replace(basePath);
       }
     </script>
   </head>
   <body>
-    Redirecting...
+    <p>Redirecting to app...</p>
   </body>
 </html>
