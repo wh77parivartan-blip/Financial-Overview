@@ -6,6 +6,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { 
   AlertTriangle, 
   TrendingDown, 
@@ -20,7 +21,12 @@ import {
   Hammer,
   Scale,
   Building,
-  Users
+  Users,
+  Info,
+  Briefcase,
+  Wrench,
+  ChevronRight,
+  MessageSquare
 } from "lucide-react";
 import {
   BarChart,
@@ -127,6 +133,21 @@ const handoverAssets = [
   { item: "Petty Cash", amount: 12000, status: "Received" }
 ];
 
+const vendorProjects = [
+  { id: "PRJ-001", title: "Lift Cabin Cladding", type: "Civil/Interior", budget: "₹8.5 Lakhs", deadline: "30 Apr 2025", status: "Open for Bidding", description: "Complete interior cladding and aesthetic upgrade for all 14 passenger lifts. Requires high quality SS finish and new lighting." },
+  { id: "PRJ-002", title: "LED Signage & Bus Stand", type: "Fabrication", budget: "₹2.2 Lakhs", deadline: "15 May 2025", status: "Open for Bidding", description: "Fabrication of society main entry LED signage and construction of a covered school bus waiting stand for children." },
+  { id: "PRJ-003", title: "New Borewell Installation", type: "Plumbing/Civil", budget: "₹12.0 Lakhs", deadline: "Pending Approval", status: "Upcoming", description: "Drilling and complete installation of a new 450ft borewell including submersible pumps, piping to main WTP, and electrical panel." },
+  { id: "PRJ-004", title: "Basement Seepage Repair", type: "Waterproofing", budget: "To be estimated", deadline: "Urgent", status: "Open for Bidding", description: "Identification and permanent waterproofing treatment of active seepage points in Basement 1 and 2 near expansion joints." }
+];
+
+const topIssues = [
+  { issue: "Water leaking in Basement 2 near Tower C", votes: 45, status: "Investigating" },
+  { issue: "AC Drippage from upper floors (Tower A)", votes: 38, status: "Notices Issued" },
+  { issue: "STP Overflow during peak morning hours", votes: 32, status: "Vendor Assigned" },
+  { issue: "Visitor parking space shortage on weekends", votes: 28, status: "Under Review" },
+  { issue: "Street lights flickering near the main gate", votes: 15, status: "Resolved" }
+];
+
 export default function Dashboard() {
   const totalExpense = 4540171; 
   const totalMonthlyBilling = 3969000; 
@@ -141,6 +162,13 @@ export default function Dashboard() {
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-border/40 pb-6">
           <div>
+            <Alert className="mb-4 bg-primary/5 border-primary/20">
+              <Info className="h-4 w-4 text-primary" />
+              <AlertTitle className="text-primary font-semibold">Demo Version</AlertTitle>
+              <AlertDescription className="text-muted-foreground text-sm">
+                This is a dashboard preview using dummy data. The real application with live data will be published later.
+              </AlertDescription>
+            </Alert>
             <div className="flex items-center gap-3 mb-2">
               <Badge variant="secondary" className="bg-primary/10 text-primary hover:bg-primary/20 border-primary/20 px-3 py-1 text-sm rounded-full">Financial Overview</Badge>
               <span className="text-sm text-muted-foreground uppercase tracking-wider font-semibold">Winter Hills 77, Gurgaon</span>
@@ -638,6 +666,101 @@ export default function Dashboard() {
             </div>
           </CardContent>
         </Card>
+
+        {/* Vendor Onboarding & Open Projects */}
+        <div className="mt-12 space-y-6">
+          <div>
+            <h2 className="text-2xl font-bold tracking-tight flex items-center gap-2">
+              <Briefcase className="h-6 w-6 text-primary" />
+              Vendor Onboarding & Opportunities
+            </h2>
+            <p className="text-muted-foreground mt-1">Explore open projects and submit your bids to work with our society.</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {vendorProjects.map((project, idx) => (
+              <Card key={idx} className="border-border/40 hover:border-primary/50 transition-all cursor-pointer group flex flex-col h-full bg-card/40 backdrop-blur-sm">
+                <CardHeader className="pb-3 flex-none">
+                  <div className="flex justify-between items-start mb-2">
+                    <Badge variant="outline" className="text-xs">{project.id}</Badge>
+                    <Badge className={project.status === 'Open for Bidding' ? 'bg-green-500/10 text-green-600 hover:bg-green-500/20 border-green-500/20' : 'bg-orange-500/10 text-orange-600 hover:bg-orange-500/20 border-orange-500/20'}>
+                      {project.status}
+                    </Badge>
+                  </div>
+                  <CardTitle className="text-lg leading-tight group-hover:text-primary transition-colors">{project.title}</CardTitle>
+                  <CardDescription className="text-xs font-medium uppercase tracking-wider mt-1">{project.type}</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4 flex-grow flex flex-col">
+                  <p className="text-sm text-muted-foreground line-clamp-3 flex-grow">{project.description}</p>
+                  
+                  <div className="space-y-2 pt-2 border-t border-border/40 mt-auto">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">Est. Budget:</span>
+                      <span className="font-mono font-medium">{project.budget}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">Deadline:</span>
+                      <span className="font-medium text-foreground">{project.deadline}</span>
+                    </div>
+                  </div>
+                  
+                  <div className="pt-2">
+                    <button className="w-full bg-primary/10 text-primary hover:bg-primary/20 hover:text-primary font-medium py-2 px-4 rounded-md text-sm transition-colors flex items-center justify-center gap-2">
+                      View Scope & Bid <ChevronRight className="h-4 w-4" />
+                    </button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+
+        {/* Resident Suggestions & Issues */}
+        <div className="mt-12 space-y-6">
+          <div>
+            <h2 className="text-2xl font-bold tracking-tight flex items-center gap-2">
+              <MessageSquare className="h-6 w-6 text-primary" />
+              Resident Suggestions & Issues
+            </h2>
+            <p className="text-muted-foreground mt-1">Top reported issues prioritized by community votes.</p>
+          </div>
+
+          <Card className="border-border/40 shadow-xl bg-card/40 backdrop-blur-sm">
+            <CardContent className="p-0">
+              <Table>
+                <TableHeader className="bg-muted/50">
+                  <TableRow>
+                    <TableHead className="w-[100px] text-center">Votes</TableHead>
+                    <TableHead>Issue / Suggestion</TableHead>
+                    <TableHead className="text-right">Status</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {topIssues.sort((a, b) => b.votes - a.votes).map((issue, idx) => (
+                    <TableRow key={idx}>
+                      <TableCell className="text-center">
+                        <div className="flex flex-col items-center justify-center p-2 rounded-md bg-muted/50 border border-border">
+                          <ArrowUpRight className="h-4 w-4 text-green-500 mb-1" />
+                          <span className="font-bold text-lg leading-none">{issue.votes}</span>
+                        </div>
+                      </TableCell>
+                      <TableCell className="font-medium text-base py-4">{issue.issue}</TableCell>
+                      <TableCell className="text-right">
+                        <Badge variant="outline" className={
+                          issue.status === 'Resolved' ? 'border-green-500/50 text-green-600 bg-green-500/10' :
+                          issue.status === 'Investigating' ? 'border-orange-500/50 text-orange-600 bg-orange-500/10' :
+                          'border-primary/50 text-primary bg-primary/10'
+                        }>
+                          {issue.status}
+                        </Badge>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        </div>
 
       </div>
     </div>
